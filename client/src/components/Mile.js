@@ -8,6 +8,7 @@ const Mile = () => {
     const [timerOn, setTimerOn] = useState(false);
     const [allTimes, setAllTimes] = useState([]);
     const [currNumber, setCurrNumber] = useState(0);
+    const [isBtn, setIsBtn] = useState(false)
 
     useEffect(() => {
         let interval = null;
@@ -25,9 +26,10 @@ const Mile = () => {
     
       const timeHandler = (event) => {
         event.preventDefault();
-        setCurrNumber(currNumber + 1);
+        
         axios.post("http://localhost:8000/api/times", {timing: time, number: currNumber, whichRun: 1})
           .then(res => {
+            setCurrNumber(currNumber + 1);
             console.log(res)
           })
           .catch(err => {
@@ -35,7 +37,8 @@ const Mile = () => {
           })
       }
     
-      useEffect(() => {
+      const handler = () =>{
+        setIsBtn(true)
         axios.get("http://localhost:8000/api/times")
         .then(res => {
           console.log(res)
@@ -43,8 +46,13 @@ const Mile = () => {
         })
         .catch(err => {
           console.log(err)
-        })
+        
       })
+    }
+
+      const btnOff = () => {
+        setIsBtn(false)
+      }
 
     return (
         <div>
@@ -74,7 +82,10 @@ const Mile = () => {
         )}
     </div>
     <h1 className="text_shadows">{time / 1000}</h1>
+
+    <button className='btn' onClick={handler}>Show Times</button>
     
+    {isBtn ? 
     <div className='flex'>
       {
         allTimes.map(t => {
@@ -85,9 +96,12 @@ const Mile = () => {
           )
         })
       }
-    </div>
+      <button className='btn' onClick={btnOff} key = {1}>Close</button>
+    </div> : <></>
+}
     
 </div>
+<h1 className='mid'>{currNumber - 1}</h1>
 
         </div>
     );
